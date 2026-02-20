@@ -1,0 +1,32 @@
+name: publish to wally
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  wally:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: setup rokit
+        uses: CompeyDev/setup-rokit@v0.1.2
+
+      - name: login
+        run: |
+          mkdir -p ~/.wally
+          echo '${{ secrets.WALLY_AUTH_TOML }}' > ~/.wally/auth.toml
+
+      - name: publish
+        run: wally publish
